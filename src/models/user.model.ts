@@ -4,6 +4,7 @@ import { Transaction } from "./transaction.model";
 
 export class User {
     public _id: string;
+    public transactions: Transaction[];
 
     constructor(
         public _name: string,

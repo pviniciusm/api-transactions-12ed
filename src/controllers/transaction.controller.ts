@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { HttpResponse } from "../util/http-response.adapter";
-import { usersList } from "../data/users";
-import { transactionsList } from "../data/transactions";
 import { Transaction, TransactionType } from "../models/transaction.model";
+import { UserRepository } from "../repositories/user.repository";
+import { TransactionRepository } from "../repositories/transaction.repository";
 
 export class TransactionController {
     public create(req: Request, res: Response) {
@@ -10,31 +10,13 @@ export class TransactionController {
             const { userId } = req.params;
             const { title, type, value } = req.body;
 
-            if (!title) {
-                return HttpResponse.fieldNotProvided(res, "Title");
-            }
-
-            if (!type) {
-                return HttpResponse.fieldNotProvided(res, "type");
-            }
-
-            const allowedTypes = Object.values(TransactionType);
-
-            if (!allowedTypes.includes(type)) {
-                return HttpResponse.invalid(res, "Type");
-            }
-
-            if (!value) {
-                return HttpResponse.fieldNotProvided(res, "value");
-            }
-
-            const user = usersList.find((user) => user.id === userId);
+            const user = new UserRepository().get(userId);
             if (!user) {
                 return HttpResponse.notFound(res, "User");
             }
 
             const transaction = new Transaction(title, value, type, user);
-            transactionsList.push(transaction);
+            new TransactionRepository().create(transaction);
 
             return HttpResponse.created(
                 res,
@@ -51,24 +33,19 @@ export class TransactionController {
             const { userId } = req.params;
             const { type } = req.query;
 
-            const user = usersList.find((user) => user.id === userId);
-            if (!user) {
-                return HttpResponse.notFound(res, "User");
-            }
+            let transactions = new TransactionRepository().list({
+                userId: userId,
+                type: type as TransactionType,
+            });
 
-            let transactions = transactionsList.filter(
-                (transaction) =>
-                    transaction.user.id === userId &&
-                    (!type || transaction.type === type)
+            let income = this.sumTransactionsValues(
+                transactions,
+                TransactionType.Income
             );
-
-            let income = transactions
-                .filter((t) => t.type === TransactionType.Income)
-                .reduce((soma, transaction) => soma + transaction.value, 0);
-
-            let outcome = transactions
-                .filter((t) => t.type === TransactionType.Outcome)
-                .reduce((soma, transaction) => soma + transaction.value, 0);
+            let outcome = this.sumTransactionsValues(
+                transactions,
+                TransactionType.Outcome
+            );
 
             return HttpResponse.success(
                 res,
@@ -85,5 +62,14 @@ export class TransactionController {
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
+    }
+
+    private sumTransactionsValues(
+        transactions: Transaction[],
+        type: TransactionType
+    ): number {
+        return transactions
+            .filter((t) => t.type === type)
+            .reduce((soma, transaction) => soma + transaction.value, 0);
     }
 }

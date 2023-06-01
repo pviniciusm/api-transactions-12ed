@@ -9,6 +9,8 @@ export const appRoutes = () => {
     app.get("/", new UserController().list);
     app.get("/:id", new UserController().get);
 
+    app.post("/login", new UserController().login);
+
     app.use("/:userId/transactions", transactionRoutes());
 
     return app;

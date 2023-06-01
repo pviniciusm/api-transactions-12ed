@@ -38,6 +38,13 @@ export class HttpResponse {
         });
     }
 
+    public static invalidCredentials(res: Response) {
+        return res.status(401).send({
+            ok: false,
+            message: "Acesso não autorizado",
+        });
+    }
+
     public static genericError(res: Response, error: any) {
         return res.status(500).send({
             ok: false,
