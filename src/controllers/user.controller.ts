@@ -6,6 +6,7 @@ import { UserRepository } from "../repositories/user.repository";
 export class UserController {
     public create(req: Request, res: Response) {
         try {
+            // ...
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
@@ -40,18 +41,18 @@ export class UserController {
 
             const user = new UserRepository().getByEmail(email);
             if (!user) {
-                return HttpResponse.notFound(res, "User");
+                // return HttpResponse.notFound(res, "User");
+                return HttpResponse.invalidCredentials(res);
             }
 
             if (user.password !== password) {
                 return HttpResponse.invalidCredentials(res);
             }
 
-            return HttpResponse.success(
-                res,
-                "Login successfully done",
-                user.toJson()
-            );
+            return HttpResponse.success(res, "Login successfully done", {
+                id: user.id,
+                name: user.name,
+            });
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
