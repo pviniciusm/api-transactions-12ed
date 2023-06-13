@@ -18,11 +18,7 @@ export class TransactionController {
             const transaction = new Transaction(title, value, type, user);
             new TransactionRepository().create(transaction);
 
-            return HttpResponse.created(
-                res,
-                "Transaction successfully created",
-                transaction
-            );
+            return HttpResponse.created(res, "Transaction successfully created", transaction);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
@@ -38,38 +34,90 @@ export class TransactionController {
                 type: type as TransactionType,
             });
 
-            let income = this.sumTransactionsValues(
-                transactions,
-                TransactionType.Income
-            );
-            let outcome = this.sumTransactionsValues(
-                transactions,
-                TransactionType.Outcome
-            );
+            let income = this.sumTransactionsValues(transactions, TransactionType.Income);
+            let outcome = this.sumTransactionsValues(transactions, TransactionType.Outcome);
+
+            return HttpResponse.success(res, "Transactions successfully listed", {
+                transactions: transactions.map((transaction) => transaction.toJson()),
+                balance: {
+                    income,
+                    outcome,
+                    total: income - outcome,
+                },
+            });
+        } catch (error: any) {
+            return HttpResponse.genericError(res, error);
+        }
+    }
+
+    public delete(req: Request, res: Response) {
+        try {
+            const { userId, transactionId } = req.params;
+
+            const user = new UserRepository().get(userId);
+            if (!user) {
+                return HttpResponse.notFound(res, "User");
+            }
+
+            const transactionRepository = new TransactionRepository();
+
+            const transaction = transactionRepository.getIndex(transactionId);
+            if (transaction < 0) {
+                return HttpResponse.notFound(res, "Transaction");
+            }
+
+            transactionRepository.delete(transaction);
+
+            const transactions = transactionRepository.list({
+                userId,
+            });
 
             return HttpResponse.success(
                 res,
-                "Transactions successfully listed",
-                {
-                    transactions,
-                    balance: {
-                        income,
-                        outcome,
-                        total: income - outcome,
-                    },
-                }
+                "Transaction successfully deleted",
+                transactions.map((transaction) => transaction.toJson())
             );
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
     }
 
-    private sumTransactionsValues(
-        transactions: Transaction[],
-        type: TransactionType
-    ): number {
-        return transactions
-            .filter((t) => t.type === type)
-            .reduce((soma, transaction) => soma + transaction.value, 0);
+    public update(req: Request, res: Response) {
+        try {
+            const { userId, transactionId } = req.params;
+            const { type } = req.body;
+
+            const user = new UserRepository().get(userId);
+            if (!user) {
+                return HttpResponse.notFound(res, "User");
+            }
+
+            const transactionRepository = new TransactionRepository();
+
+            const transaction = transactionRepository.get(transactionId);
+            if (!transaction) {
+                return HttpResponse.notFound(res, "Transaction");
+            }
+
+            if (type) {
+                transaction.type = type as TransactionType;
+            }
+
+            const transactions = transactionRepository.list({
+                userId,
+            });
+
+            return HttpResponse.success(
+                res,
+                "Transaction successfully deleted",
+                transactions.map((transaction) => transaction.toJson())
+            );
+        } catch (error: any) {
+            return HttpResponse.genericError(res, error);
+        }
+    }
+
+    private sumTransactionsValues(transactions: Transaction[], type: TransactionType): number {
+        return transactions.filter((t) => t.type === type).reduce((soma, transaction) => soma + transaction.value, 0);
     }
 }
