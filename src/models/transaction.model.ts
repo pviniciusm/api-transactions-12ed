@@ -22,6 +22,9 @@ export class Transaction {
     public get value(): number {
         return this._value;
     }
+    public set value(value: number) {
+        this._value = value;
+    }
     public get type(): TransactionType {
         return this._type;
     }

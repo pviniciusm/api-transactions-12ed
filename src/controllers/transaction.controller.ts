@@ -85,7 +85,7 @@ export class TransactionController {
     public update(req: Request, res: Response) {
         try {
             const { userId, transactionId } = req.params;
-            const { type } = req.body;
+            const { type, value } = req.body;
 
             const user = new UserRepository().get(userId);
             if (!user) {
@@ -103,13 +103,17 @@ export class TransactionController {
                 transaction.type = type as TransactionType;
             }
 
+            if(value) {
+                transaction.value = value;
+            }
+
             const transactions = transactionRepository.list({
                 userId,
             });
 
             return HttpResponse.success(
                 res,
-                "Transaction successfully deleted",
+                "Transaction successfully updated",
                 transactions.map((transaction) => transaction.toJson())
             );
         } catch (error: any) {
