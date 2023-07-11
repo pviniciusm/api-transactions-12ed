@@ -12,16 +12,29 @@ export class UserController {
         }
     }
 
-    public list(req: Request, res: Response) {
+    public async list(req: Request, res: Response) {
         try {
-            return HttpResponse.success(res, "ok", usersList);
+            const repository = new UserRepository();
+            const result = await repository.list();
+
+            return HttpResponse.success(res, "Users successfully listed", result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
     }
 
-    public get(req: Request, res: Response) {
+    public async get(req: Request, res: Response) {
         try {
+            const { id } = req.params;
+
+            const repository = new UserRepository();
+            const result = await repository.get(id);
+
+            if (!result) {
+                return HttpResponse.notFound(res, "User");
+            }
+
+            return HttpResponse.success(res, "User successfully obtained", result.toJson());
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }

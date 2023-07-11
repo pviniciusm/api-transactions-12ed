@@ -5,18 +5,18 @@ import { UserRepository } from "../repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 
 export class TransactionController {
-    public create(req: Request, res: Response) {
+    public async create(req: Request, res: Response) {
         try {
             const { userId } = req.params;
             const { title, type, value } = req.body;
 
-            const user = new UserRepository().get(userId);
+            const user = await new UserRepository().get(userId);
             if (!user) {
                 return HttpResponse.notFound(res, "User");
             }
 
             const transaction = new Transaction(title, value, type, user);
-            new TransactionRepository().create(transaction);
+            await new TransactionRepository().create(transaction);
 
             return HttpResponse.created(res, "Transaction successfully created", transaction);
         } catch (error: any) {
@@ -24,12 +24,12 @@ export class TransactionController {
         }
     }
 
-    public list(req: Request, res: Response) {
+    public async list(req: Request, res: Response) {
         try {
             const { userId } = req.params;
             const { type } = req.query;
 
-            let transactions = new TransactionRepository().list({
+            let transactions = await new TransactionRepository().list({
                 userId: userId,
                 type: type as TransactionType,
             });
@@ -50,25 +50,23 @@ export class TransactionController {
         }
     }
 
-    public delete(req: Request, res: Response) {
+    public async delete(req: Request, res: Response) {
         try {
             const { userId, transactionId } = req.params;
 
-            const user = new UserRepository().get(userId);
+            const user = await new UserRepository().get(userId);
             if (!user) {
                 return HttpResponse.notFound(res, "User");
             }
 
             const transactionRepository = new TransactionRepository();
+            const deletedTransactions = await transactionRepository.delete(transactionId);
 
-            const transaction = transactionRepository.getIndex(transactionId);
-            if (transaction < 0) {
+            if (deletedTransactions == 0) {
                 return HttpResponse.notFound(res, "Transaction");
             }
 
-            transactionRepository.delete(transaction);
-
-            const transactions = transactionRepository.list({
+            const transactions = await transactionRepository.list({
                 userId,
             });
 
@@ -82,7 +80,7 @@ export class TransactionController {
         }
     }
 
-    public update(req: Request, res: Response) {
+    public async update(req: Request, res: Response) {
         try {
             const { userId, transactionId } = req.params;
             const { type, value } = req.body;
@@ -103,11 +101,11 @@ export class TransactionController {
                 transaction.type = type as TransactionType;
             }
 
-            if(value) {
+            if (value) {
                 transaction.value = value;
             }
 
-            const transactions = transactionRepository.list({
+            const transactions = await transactionRepository.list({
                 userId,
             });
 

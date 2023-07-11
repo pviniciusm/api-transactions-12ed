@@ -43,4 +43,11 @@ export class Transaction {
             value: this._value,
         };
     }
+
+    public static create(row: any, user: User) {
+        const transaction = new Transaction(row.title, Number(row.value), row.type, user);
+        transaction._id = row.id;
+
+        return transaction;
+    }
 }

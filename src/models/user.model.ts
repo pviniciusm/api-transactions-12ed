@@ -3,16 +3,10 @@ import { cpf as validCPF } from "cpf-cnpj-validator";
 import { Transaction } from "./transaction.model";
 
 export class User {
-    public _id: string;
+    private _id: string;
     public transactions: Transaction[];
 
-    constructor(
-        public _name: string,
-        public _cpf: number,
-        public _email: string,
-        public _age: number,
-        private _password: string
-    ) {
+    constructor(public _name: string, public _cpf: number, public _email: string, public _age: number, private _password: string) {
         this._id = createUuid();
     }
 
@@ -48,5 +42,12 @@ export class User {
             email: this.email,
             age: this.age,
         };
+    }
+
+    public static create(row: any) {
+        const user = new User(row.name, row.cpf, row.email, row.age, row.password);
+        user._id = row.id;
+
+        return user;
     }
 }
