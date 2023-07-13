@@ -1,5 +1,6 @@
 import { v4 as uuidCreator } from "uuid";
 import { User } from "./user.model";
+import { TransactionEntity } from "../database/entities/transaction.entity";
 
 export enum TransactionType {
     Income = "I",
@@ -44,8 +45,8 @@ export class Transaction {
         };
     }
 
-    public static create(row: any, user: User) {
-        const transaction = new Transaction(row.title, Number(row.value), row.type, user);
+    public static create(row: TransactionEntity, user: User) {
+        const transaction = new Transaction(row.title, Number(row.value), row.type as TransactionType, user);
         transaction._id = row.id;
 
         return transaction;

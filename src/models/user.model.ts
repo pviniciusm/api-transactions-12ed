@@ -1,6 +1,7 @@
 import { v4 as createUuid } from "uuid";
 import { cpf as validCPF } from "cpf-cnpj-validator";
 import { Transaction } from "./transaction.model";
+import { UserEntity } from "../database/entities/user.entity";
 
 export class User {
     private _id: string;
@@ -44,7 +45,7 @@ export class User {
         };
     }
 
-    public static create(row: any) {
+    public static create(row: UserEntity) {
         const user = new User(row.name, row.cpf, row.email, row.age, row.password);
         user._id = row.id;
 

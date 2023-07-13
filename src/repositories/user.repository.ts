@@ -1,25 +1,51 @@
+import { ILike, Like, MoreThan } from "typeorm";
 import { usersList } from "../data/users";
-import { Database } from "../database/database.connection";
+import { Database } from "../database/config/database.connection";
+import { UserEntity } from "../database/entities/user.entity";
 import { User } from "../models/user.model";
 
 export class UserRepository {
-    private connection = Database.connection;
+    private repository = Database.connection.getRepository(UserEntity);
 
     public async list() {
-        const result = await this.connection.query("select * from transactions.user");
-        return result.rows;
+        const result = await this.repository.find({
+            // where: {
+            //     age: MoreThan(20),
+            //     name: ILike("%teste%"),
+            // }
+            where: [
+                {
+                    age: MoreThan(20),
+                },
+                {
+                    name: ILike("%teste%"),
+                },
+            ],
+        });
+
+        return result.map((entity) => UserRepository.mapRowToModel(entity));
     }
 
     public async get(id: string) {
-        // usersList.find((user) => user.id === id);
-        const result = await this.connection.query(`select * from transactions.user where id = '${id}'`);
+        // const result = await this.repository.find({
+        //     where: {
+        //         id
+        //     }
+        // });
 
-        if (result.rows.length == 0) {
+        // const result = await this.repository.findBy({
+        //     id
+        // });
+
+        const result = await this.repository.findOneBy({
+            id,
+        });
+
+        if (!result) {
             return undefined;
         }
 
-        const dbUser = result.rows[0];
-        return UserRepository.mapRowToModel(dbUser);
+        return UserRepository.mapRowToModel(result);
     }
 
     public getByCpf(cpf: number) {
@@ -30,7 +56,7 @@ export class UserRepository {
         return usersList.find((user) => user.email === email);
     }
 
-    public static mapRowToModel(row: any): User {
+    public static mapRowToModel(row: UserEntity): User {
         return User.create(row);
     }
 }
