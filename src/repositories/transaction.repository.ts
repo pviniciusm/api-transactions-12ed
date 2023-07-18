@@ -11,40 +11,53 @@ interface ListTransactionsParams {
 }
 
 export class TransactionRepository {
-    private connection = Database.connection;
     private repository = Database.connection.getRepository(TransactionEntity);
 
     public async create(transaction: Transaction) {
-        let query = `insert into transactions.transaction `;
-        query += `(id, title, value, type, id_user) `;
-        query += `values`;
-        query += `('${transaction.id}', '${transaction.title}', ${transaction.value}, '${transaction.type}', '${transaction.user.id}')`;
+        const transactionEntity = this.repository.create({
+            id: transaction.id,
+            type: transaction.type,
+            title: transaction.title,
+            idUser: transaction.user.id,
+            value: transaction.value,
+        });
 
-        console.log(query);
+        // // Active Record
+        // await transactionEntity.save();
 
-        await this.connection.query(query);
+        // Data Mapper
+        await this.repository.save(transactionEntity);
     }
 
     public async list(params: ListTransactionsParams) {
-        // let query = "select * from transactions.transaction ";
-        // query += `where id_user = '${params.userId}' `;
-
-        // if (params.type) {
-        //     query += `and type = '${params.type}'`;
-        // }
-
-        // const result = await this.connection.query(query);
-
-        const result = await this.repository.findBy({
-            idUser: params.userId,
-            type: params.type,
+        const result = await this.repository.find({
+            where: {
+                idUser: params.userId,
+                type: params.type,
+            },
+            relations: {
+                user: true,
+            },
         });
+
+        // const result = await this.repository.findBy({
+        //     idUser: params.userId,
+        //     type: params.type,
+        // });
 
         return result.map((row) => this.mapRowToModel(row));
     }
 
-    public get(id: string) {
-        return transactionsList.find((transaction) => transaction.id === id);
+    public async get(id: string) {
+        const result = await this.repository.findOneBy({
+            id,
+        });
+
+        if (!result) {
+            return undefined;
+        }
+
+        return this.mapRowToModel(result);
     }
 
     public getIndex(id: string) {
@@ -52,17 +65,42 @@ export class TransactionRepository {
     }
 
     public async delete(id: string) {
-        const result = await this.connection.query(`delete from transactions.transaction where id = '${id}'`);
-        console.log(result);
+        const result = await this.repository.delete({
+            id,
+        });
 
-        return result.rowCount;
+        return result.affected ?? 0;
     }
 
-    private mapRowToModel(row: any) {
-        // const user = UserRepository.mapRowToModel(row);
+    public async update(transaction: Transaction) {
+        await this.repository.update(
+            {
+                id: transaction.id,
+            },
+            {
+                type: transaction.type,
+                value: transaction.value,
+            }
+        );
+    }
 
-        // to-do: depois voltar a fazer o mapRowToModel do user
-        const user = new User("any_name", 4654654, "teste@teste.com", 30, "aiudasd");
+    public async updateWithSave(transaction: Transaction) {
+        const entity = await this.repository.findOneBy({
+            id: transaction.id,
+        });
+
+        if (!entity) {
+            return undefined;
+        }
+
+        entity.type = transaction.type;
+        entity.value = transaction.value;
+
+        this.repository.save(entity);
+    }
+
+    private mapRowToModel(row: TransactionEntity) {
+        const user = UserRepository.mapRowToModel(row.user);
 
         return Transaction.create(row, user);
     }

@@ -42,6 +42,7 @@ export class Transaction {
             title: this._title,
             type: this._type,
             value: this._value,
+            user: this._user?.toJson(),
         };
     }
 

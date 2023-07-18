@@ -11,6 +11,7 @@ export const transactionRoutes = () => {
     const controller = new TransactionController();
 
     app.get("/", [UserMiddleware.validateUserExists], (req: Request, res: Response) => controller.list(req, res));
+    app.get("/:id", (req: Request, res: Response) => controller.get(req, res));
     app.post("/", [TransactionMiddleware.validateFieldsCreate], controller.create);
     app.delete("/:transactionId", controller.delete);
     app.put("/:transactionId", controller.update);

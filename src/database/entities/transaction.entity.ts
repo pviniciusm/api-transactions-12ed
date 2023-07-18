@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { TransactionType } from "../../models/transaction.model";
+import { UserEntity } from "./user.entity";
 
 @Entity("transaction")
 export class TransactionEntity {
@@ -26,4 +27,10 @@ export class TransactionEntity {
         name: "id_user",
     })
     idUser: string;
+
+    @ManyToOne(() => UserEntity)
+    @JoinColumn({
+        name: "id_user",
+    })
+    user: UserEntity;
 }

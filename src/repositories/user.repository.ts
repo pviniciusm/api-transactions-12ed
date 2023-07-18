@@ -8,20 +8,9 @@ export class UserRepository {
     private repository = Database.connection.getRepository(UserEntity);
 
     public async list() {
-        const result = await this.repository.find({
-            // where: {
-            //     age: MoreThan(20),
-            //     name: ILike("%teste%"),
-            // }
-            where: [
-                {
-                    age: MoreThan(20),
-                },
-                {
-                    name: ILike("%teste%"),
-                },
-            ],
-        });
+        const result = await this.repository.find();
+
+        console.log(result);
 
         return result.map((entity) => UserRepository.mapRowToModel(entity));
     }

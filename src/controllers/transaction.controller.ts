@@ -50,6 +50,27 @@ export class TransactionController {
         }
     }
 
+    public async get(req: Request, res: Response) {
+        try {
+            const { userId, transactionId } = req.params;
+
+            const user = new UserRepository().get(userId);
+            if (!user) {
+                return HttpResponse.notFound(res, "User");
+            }
+
+            const transactionRepository = new TransactionRepository();
+            const transaction = await transactionRepository.get(transactionId);
+            if (!transaction) {
+                return HttpResponse.notFound(res, "Transaction");
+            }
+
+            return HttpResponse.success(res, "Transaction successfully obtained", transaction.toJson());
+        } catch (error: any) {
+            return HttpResponse.genericError(res, error);
+        }
+    }
+
     public async delete(req: Request, res: Response) {
         try {
             const { userId, transactionId } = req.params;
@@ -91,8 +112,7 @@ export class TransactionController {
             }
 
             const transactionRepository = new TransactionRepository();
-
-            const transaction = transactionRepository.get(transactionId);
+            const transaction = await transactionRepository.get(transactionId);
             if (!transaction) {
                 return HttpResponse.notFound(res, "Transaction");
             }
@@ -104,6 +124,8 @@ export class TransactionController {
             if (value) {
                 transaction.value = value;
             }
+
+            await transactionRepository.update(transaction);
 
             const transactions = await transactionRepository.list({
                 userId,

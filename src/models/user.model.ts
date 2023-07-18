@@ -42,6 +42,7 @@ export class User {
             cpf: validCPF.format(this.cpf.toString().padStart(11, "0")),
             email: this.email,
             age: this.age,
+            transactions: this.transactions,
         };
     }
 
