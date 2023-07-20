@@ -1,4 +1,4 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, UpdateDateColumn } from "typeorm";
 import { TransactionType } from "../../models/transaction.model";
 import { UserEntity } from "./user.entity";
 
@@ -14,14 +14,25 @@ export class TransactionEntity {
     value: number;
 
     @Column({
+        length: 60,
+        nullable: true,
+    })
+    estabelecimento: string;
+
+    @Column({
         enum: TransactionType,
     })
     type: string;
 
-    @Column({
+    @CreateDateColumn({
         name: "created_at",
     })
     createdAt: Date;
+
+    @UpdateDateColumn({
+        name: "updated_at",
+    })
+    updatedAt: Date;
 
     @Column({
         name: "id_user",

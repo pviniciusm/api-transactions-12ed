@@ -14,8 +14,9 @@ const config = new DataSource({
         rejectUnauthorized: false,
     },
     synchronize: false,
-    schema: "transactions",
+    schema: "aula",
     entities: ["src/database/entities/**/*.ts"],
+    migrations: ["src/database/migrations/**/*.ts"],
 });
 
 export default config;

@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { TransactionEntity } from "./transaction.entity";
+import { CategoryEntity } from "./category.entity";
 
 @Entity("user")
 export class UserEntity {
@@ -28,4 +29,8 @@ export class UserEntity {
 
     @OneToMany(() => TransactionEntity, (transaction) => transaction.user)
     transactions: TransactionEntity[];
+
+    @ManyToMany(() => CategoryEntity)
+    @JoinTable()
+    categories: CategoryEntity[];
 }
