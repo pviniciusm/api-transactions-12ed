@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
-import { transactionRoutes } from "./transaction.routes";
+import { transactionRoutes } from "../../../../routes/transaction.routes";
 
 export const appRoutes = () => {
     const app = Router();

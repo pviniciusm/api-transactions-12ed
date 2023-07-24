@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { TransactionController } from "../controllers/transaction.controller";
-import { UserMiddleware } from "../middlewares/user.middleware";
+import { UserMiddleware } from "../app/features/user/validators/user.middleware";
 import { TransactionMiddleware } from "../middlewares/transaction.middleware";
 
 export const transactionRoutes = () => {

@@ -1,6 +1,6 @@
 import cors from "cors";
 import express, { Request, Response, Express } from "express";
-import { appRoutes } from "../../routes/user.routes";
+import { appRoutes } from "../../app/features/user/routes/user.routes";
 import * as dotenv from "dotenv";
 dotenv.config();
 

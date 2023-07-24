@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpResponse } from "../app/shared/util/http-response.adapter";
+import { HttpResponse } from "../../../shared/util/http-response.adapter";
 import { UserRepository } from "../repositories/user.repository";
 
 export class UserMiddleware {

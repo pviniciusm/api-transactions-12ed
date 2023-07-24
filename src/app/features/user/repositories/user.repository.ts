@@ -1,8 +1,9 @@
 import { ILike, Like, MoreThan } from "typeorm";
-import { usersList } from "../data/users";
-import { Database } from "../main/database/database.connection";
-import { UserEntity } from "../database/entities/user.entity";
-import { User } from "../app/models/user.model";
+import { usersList } from "../../../../data/users";
+import { Database } from "../../../../main/database/database.connection";
+
+import { User } from "../../../models/user.model";
+import { UserEntity } from "../../../shared/database/entities/user.entity";
 
 export class UserRepository {
     private repository = Database.connection.getRepository(UserEntity);
