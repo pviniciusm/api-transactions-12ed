@@ -1,4 +1,4 @@
-import { User } from "../models/user.model";
+import { User } from "../app/models/user.model";
 
 export const usersList: User[] = [
     new User("Maria", 66535152570, "m@g.com", 30, "12345"),
