@@ -1,4 +1,3 @@
-import { transactionsList } from "../../../../data/transactions";
 import { Database } from "../../../../main/database/database.connection";
 import { Transaction, TransactionType } from "../../../models/transaction.model";
 import { UserRepository } from "../../user/repositories/user.repository";
@@ -57,10 +56,6 @@ export class TransactionRepository {
         }
 
         return this.mapRowToModel(result);
-    }
-
-    public getIndex(id: string) {
-        return transactionsList.findIndex((transaction) => transaction.id === id);
     }
 
     public async delete(id: string) {

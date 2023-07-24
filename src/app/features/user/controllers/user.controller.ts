@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { HttpResponse } from "../../../shared/util/http-response.adapter";
-import { usersList } from "../../../../data/users";
 import { UserRepository } from "../repositories/user.repository";
 
 export class UserController {
@@ -40,7 +39,7 @@ export class UserController {
         }
     }
 
-    public login(req: Request, res: Response) {
+    public async login(req: Request, res: Response) {
         try {
             const { email, password } = req.body;
 
@@ -52,7 +51,7 @@ export class UserController {
                 return HttpResponse.fieldNotProvided(res, "Password");
             }
 
-            const user = new UserRepository().getByEmail(email);
+            const user = await new UserRepository().getByEmail(email);
             if (!user) {
                 // return HttpResponse.notFound(res, "User");
                 return HttpResponse.invalidCredentials(res);

@@ -1,5 +1,3 @@
-import { ILike, Like, MoreThan } from "typeorm";
-import { usersList } from "../../../../data/users";
 import { Database } from "../../../../main/database/database.connection";
 
 import { User } from "../../../models/user.model";
@@ -38,12 +36,28 @@ export class UserRepository {
         return UserRepository.mapRowToModel(result);
     }
 
-    public getByCpf(cpf: number) {
-        return usersList.find((user) => user.cpf === cpf);
+    public async getByCpf(cpf: number) {
+        const result = await this.repository.findOneBy({
+            cpf,
+        });
+
+        if (!result) {
+            return undefined;
+        }
+
+        return UserRepository.mapRowToModel(result);
     }
 
-    public getByEmail(email: string) {
-        return usersList.find((user) => user.email === email);
+    public async getByEmail(email: string) {
+        const result = await this.repository.findOneBy({
+            email,
+        });
+
+        if (!result) {
+            return undefined;
+        }
+
+        return UserRepository.mapRowToModel(result);
     }
 
     public static mapRowToModel(row: UserEntity): User {
