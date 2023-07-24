@@ -1,7 +1,7 @@
 import { transactionsList } from "../data/transactions";
 import { Database } from "../main/database/database.connection";
 import { TransactionEntity } from "../database/entities/transaction.entity";
-import { Transaction, TransactionType } from "../models/transaction.model";
+import { Transaction, TransactionType } from "../app/models/transaction.model";
 import { User } from "../models/user.model";
 import { UserRepository } from "./user.repository";
 

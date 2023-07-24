@@ -1,13 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpResponse } from "../util/http-response.adapter";
-import { TransactionType } from "../models/transaction.model";
+import { TransactionType } from "../app/models/transaction.model";
 
 export class TransactionMiddleware {
-    public static validateFieldsCreate(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+    public static validateFieldsCreate(req: Request, res: Response, next: NextFunction) {
         try {
             const { title, type, value } = req.body;
 

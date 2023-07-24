@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { HttpResponse } from "../util/http-response.adapter";
-import { Transaction, TransactionType } from "../models/transaction.model";
+import { Transaction, TransactionType } from "../app/models/transaction.model";
 import { UserRepository } from "../repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 
