@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { HttpResponse } from "../app/shared/util/http-response.adapter";
-import { Transaction, TransactionType } from "../app/models/transaction.model";
-import { UserRepository } from "../app/features/user/repositories/user.repository";
+import { HttpResponse } from "../../../shared/util/http-response.adapter";
+import { Transaction, TransactionType } from "../../../models/transaction.model";
+import { UserRepository } from "../../user/repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 
 export class TransactionController {

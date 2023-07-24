@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpResponse } from "../app/shared/util/http-response.adapter";
-import { TransactionType } from "../app/models/transaction.model";
+import { HttpResponse } from "../../../shared/util/http-response.adapter";
+import { TransactionType } from "../../../models/transaction.model";
 
 export class TransactionMiddleware {
     public static validateFieldsCreate(req: Request, res: Response, next: NextFunction) {
