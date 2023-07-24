@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { HttpResponse } from "../util/http-response.adapter";
+import { HttpResponse } from "../app/shared/util/http-response.adapter";
 import { usersList } from "../data/users";
 import { UserRepository } from "../repositories/user.repository";
 

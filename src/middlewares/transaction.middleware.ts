@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpResponse } from "../util/http-response.adapter";
+import { HttpResponse } from "../app/shared/util/http-response.adapter";
 import { TransactionType } from "../app/models/transaction.model";
 
 export class TransactionMiddleware {

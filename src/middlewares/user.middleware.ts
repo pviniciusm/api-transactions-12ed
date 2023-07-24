@@ -1,13 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpResponse } from "../util/http-response.adapter";
+import { HttpResponse } from "../app/shared/util/http-response.adapter";
 import { UserRepository } from "../repositories/user.repository";
 
 export class UserMiddleware {
-    public static validateUserExists(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+    public static validateUserExists(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId } = req.params;
 
