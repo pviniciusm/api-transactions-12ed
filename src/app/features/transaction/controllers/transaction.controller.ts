@@ -3,7 +3,11 @@ import { HttpResponse } from "../../../shared/util/http-response.adapter";
 import { Transaction, TransactionType } from "../../../models/transaction.model";
 import { UserRepository } from "../../user/repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
+import { UpdateTransactionUsecase } from "../usecases/update-transaction.usecase";
 
+/**
+ * teste
+ */
 export class TransactionController {
     public async create(req: Request, res: Response) {
         try {
@@ -106,36 +110,14 @@ export class TransactionController {
             const { userId, transactionId } = req.params;
             const { type, value } = req.body;
 
-            const user = new UserRepository().get(userId);
-            if (!user) {
-                return HttpResponse.notFound(res, "User");
-            }
-
-            const transactionRepository = new TransactionRepository();
-            const transaction = await transactionRepository.get(transactionId);
-            if (!transaction) {
-                return HttpResponse.notFound(res, "Transaction");
-            }
-
-            if (type) {
-                transaction.type = type as TransactionType;
-            }
-
-            if (value) {
-                transaction.value = value;
-            }
-
-            await transactionRepository.update(transaction);
-
-            const transactions = await transactionRepository.list({
+            const result = await new UpdateTransactionUsecase().execute({
+                type: type as TransactionType,
+                value,
                 userId,
+                transactionId,
             });
 
-            return HttpResponse.success(
-                res,
-                "Transaction successfully updated",
-                transactions.map((transaction) => transaction.toJson())
-            );
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
