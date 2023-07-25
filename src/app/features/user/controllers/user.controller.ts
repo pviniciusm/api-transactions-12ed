@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import { HttpResponse } from "../../../shared/util/http-response.adapter";
 import { UserRepository } from "../repositories/user.repository";
+import { ListUsersUsecase } from "../usecases/list-users.usecase";
+import { LoginUsecase } from "../usecases/login.usecase";
 
 export class UserController {
     public create(req: Request, res: Response) {
@@ -13,10 +15,9 @@ export class UserController {
 
     public async list(req: Request, res: Response) {
         try {
-            const repository = new UserRepository();
-            const result = await repository.list();
+            const result = await new ListUsersUsecase().execute();
 
-            return HttpResponse.success(res, "Users successfully listed", result);
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
@@ -41,30 +42,9 @@ export class UserController {
 
     public async login(req: Request, res: Response) {
         try {
-            const { email, password } = req.body;
+            const result = await new LoginUsecase().execute(req.body);
 
-            if (!email) {
-                return HttpResponse.fieldNotProvided(res, "E-mail");
-            }
-
-            if (!password) {
-                return HttpResponse.fieldNotProvided(res, "Password");
-            }
-
-            const user = await new UserRepository().getByEmail(email);
-            if (!user) {
-                // return HttpResponse.notFound(res, "User");
-                return HttpResponse.invalidCredentials(res);
-            }
-
-            if (user.password !== password) {
-                return HttpResponse.invalidCredentials(res);
-            }
-
-            return HttpResponse.success(res, "Login successfully done", {
-                id: user.id,
-                name: user.name,
-            });
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
