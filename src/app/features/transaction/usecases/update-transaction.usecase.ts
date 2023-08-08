@@ -1,5 +1,6 @@
 import { TransactionType } from "../../../models/transaction.model";
 import { Result } from "../../../shared/contracts/result.contract";
+import { CacheRepository } from "../../../shared/database/repositories/cache.repository";
 import { Return } from "../../../shared/util/return.adapter";
 import { UserRepository } from "../../user/repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
@@ -47,6 +48,7 @@ export class UpdateTransactionUsecase {
         }
 
         await transactionRepository.update(transaction);
+        await new CacheRepository().delete(`transactions-${params.userId}`);
 
         const transactions = await transactionRepository.list({
             userId: params.userId,

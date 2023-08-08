@@ -4,6 +4,7 @@ import { Transaction, TransactionType } from "../../../models/transaction.model"
 import { UserRepository } from "../../user/repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { UpdateTransactionUsecase } from "../usecases/update-transaction.usecase";
+import { ListTransactionsUsecase } from "../usecases/list-transactions.usecase";
 
 /**
  * teste
@@ -33,22 +34,12 @@ export class TransactionController {
             const { userId } = req.params;
             const { type } = req.query;
 
-            let transactions = await new TransactionRepository().list({
-                userId: userId,
+            const result = await new ListTransactionsUsecase().execute({
+                userId,
                 type: type as TransactionType,
             });
 
-            let income = this.sumTransactionsValues(transactions, TransactionType.Income);
-            let outcome = this.sumTransactionsValues(transactions, TransactionType.Outcome);
-
-            return HttpResponse.success(res, "Transactions successfully listed", {
-                transactions: transactions.map((transaction) => transaction.toJson()),
-                balance: {
-                    income,
-                    outcome,
-                    total: income - outcome,
-                },
-            });
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
@@ -121,9 +112,5 @@ export class TransactionController {
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
-    }
-
-    private sumTransactionsValues(transactions: Transaction[], type: TransactionType): number {
-        return transactions.filter((t) => t.type === type).reduce((soma, transaction) => soma + transaction.value, 0);
     }
 }

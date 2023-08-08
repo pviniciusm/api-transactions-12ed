@@ -47,8 +47,13 @@ export class TransactionRepository {
     }
 
     public async get(id: string) {
-        const result = await this.repository.findOneBy({
-            id,
+        const result = await this.repository.findOne({
+            where: {
+                id,
+            },
+            relations: {
+                user: true,
+            },
         });
 
         if (!result) {

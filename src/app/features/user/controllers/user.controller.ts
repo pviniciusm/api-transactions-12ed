@@ -3,6 +3,7 @@ import { HttpResponse } from "../../../shared/util/http-response.adapter";
 import { UserRepository } from "../repositories/user.repository";
 import { ListUsersUsecase } from "../usecases/list-users.usecase";
 import { LoginUsecase } from "../usecases/login.usecase";
+import { GetUserUsecase } from "../usecases/get-user.usecase";
 
 export class UserController {
     public create(req: Request, res: Response) {
@@ -27,14 +28,9 @@ export class UserController {
         try {
             const { id } = req.params;
 
-            const repository = new UserRepository();
-            const result = await repository.get(id);
+            const result = await new GetUserUsecase().execute(id);
 
-            if (!result) {
-                return HttpResponse.notFound(res, "User");
-            }
-
-            return HttpResponse.success(res, "User successfully obtained", result.toJson());
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
