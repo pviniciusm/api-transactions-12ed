@@ -10,17 +10,18 @@ interface ListTransactionsParams {
 }
 
 export class ListTransactionsUsecase {
+    constructor(private cacheRepository: CacheRepository, private transactionRepository: TransactionRepository) {}
+
     public async execute(params: ListTransactionsParams): Promise<Result> {
         // 1 - verifica se está em cache
-        const cacheRepository = new CacheRepository();
-        const cachedTransactions = await cacheRepository.get(`transactions-${params.userId}`);
+        const cachedTransactions = await this.cacheRepository.get(`transactions-${params.userId}`);
 
         // 2 - se está, retorna o que estiver em cache
         if (cachedTransactions) {
             return Return.success("Transactions successfully listed", cachedTransactions);
         }
 
-        let transactions = await new TransactionRepository().list({
+        let transactions = await this.transactionRepository.list({
             userId: params.userId,
             type: params.type,
         });
@@ -38,7 +39,8 @@ export class ListTransactionsUsecase {
         };
 
         // 3 - se não está, salva em cache
-        await cacheRepository.set(`transactions-${params.userId}`, result);
+        await this.cacheRepository.setEx(`transactions-${params.userId}`, result, 3600);
+        // TTL => Time To Live (ou seja, tempo de expiração)
 
         return Return.success("Transactions successfully listed", result);
     }

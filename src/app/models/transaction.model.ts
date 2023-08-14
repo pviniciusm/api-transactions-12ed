@@ -1,6 +1,6 @@
 import { v4 as uuidCreator } from "uuid";
 import { User } from "./user.model";
-import { TransactionEntity } from "../../database/entities/transaction.entity";
+import { TransactionEntity } from "../shared/database/entities/transaction.entity";
 
 export enum TransactionType {
     Income = "I",

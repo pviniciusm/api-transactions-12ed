@@ -49,6 +49,7 @@ export class UpdateTransactionUsecase {
 
         await transactionRepository.update(transaction);
         await new CacheRepository().delete(`transactions-${params.userId}`);
+        await new CacheRepository().delete(`transaction-${params.transactionId}`);
 
         const transactions = await transactionRepository.list({
             userId: params.userId,

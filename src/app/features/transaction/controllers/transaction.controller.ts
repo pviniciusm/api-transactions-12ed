@@ -5,25 +5,28 @@ import { UserRepository } from "../../user/repositories/user.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { UpdateTransactionUsecase } from "../usecases/update-transaction.usecase";
 import { ListTransactionsUsecase } from "../usecases/list-transactions.usecase";
+import { GetTransactionUsecase } from "../usecases/get-transaction.usecase";
+import { CreateTransactionUsecase } from "../usecases/create-transaction.usecase";
 
 /**
  * teste
  */
 export class TransactionController {
+    constructor(private createUsecase: CreateTransactionUsecase, private listUsecase: ListTransactionsUsecase) {}
+
     public async create(req: Request, res: Response) {
         try {
             const { userId } = req.params;
             const { title, type, value } = req.body;
 
-            const user = await new UserRepository().get(userId);
-            if (!user) {
-                return HttpResponse.notFound(res, "User");
-            }
+            const result = await this.createUsecase.execute({
+                userId,
+                title,
+                type: type as TransactionType,
+                value,
+            });
 
-            const transaction = new Transaction(title, value, type, user);
-            await new TransactionRepository().create(transaction);
-
-            return HttpResponse.created(res, "Transaction successfully created", transaction);
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }
@@ -34,7 +37,7 @@ export class TransactionController {
             const { userId } = req.params;
             const { type } = req.query;
 
-            const result = await new ListTransactionsUsecase().execute({
+            const result = await this.listUsecase.execute({
                 userId,
                 type: type as TransactionType,
             });
@@ -49,18 +52,16 @@ export class TransactionController {
         try {
             const { userId, transactionId } = req.params;
 
-            const user = new UserRepository().get(userId);
-            if (!user) {
-                return HttpResponse.notFound(res, "User");
-            }
+            const params = {
+                userId: userId,
+                transactionId: transactionId,
+            };
 
-            const transactionRepository = new TransactionRepository();
-            const transaction = await transactionRepository.get(transactionId);
-            if (!transaction) {
-                return HttpResponse.notFound(res, "Transaction");
-            }
+            console.log(params);
 
-            return HttpResponse.success(res, "Transaction successfully obtained", transaction.toJson());
+            const result = await new GetTransactionUsecase().execute(params);
+
+            return res.status(result.code).send(result);
         } catch (error: any) {
             return HttpResponse.genericError(res, error);
         }

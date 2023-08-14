@@ -1,9 +1,10 @@
 import { Database } from "../../../../main/database/database.connection";
 
 import { User } from "../../../models/user.model";
+import { UserRepositoryContract } from "../../../shared/contracts/user-repo.contract";
 import { UserEntity } from "../../../shared/database/entities/user.entity";
 
-export class UserRepository {
+export class UserRepository implements UserRepositoryContract {
     private repository = Database.connection.getRepository(UserEntity);
 
     public async list() {
