@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import { Entity, Column, PrimaryColumn, OneToMany, ManyToMany, JoinTable, CreateDateColumn } from "typeorm";
 import { TransactionEntity } from "./transaction.entity";
 import { CategoryEntity } from "./category.entity";
 
@@ -22,7 +22,7 @@ export class UserEntity {
     @Column()
     password: string;
 
-    @Column({
+    @CreateDateColumn({
         name: "created_at",
     })
     createdAt: Date;
