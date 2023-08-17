@@ -23,7 +23,7 @@ describe("Testes de API do controller de user - método login", () => {
         const transactionRepository = database.getRepository(TransactionEntity);
 
         await transactionRepository.clear();
-        await userRepository.query('truncate table transactions."user" cascade');
+        await userRepository.clear();
     });
 
     afterAll(async () => {
@@ -47,6 +47,7 @@ describe("Testes de API do controller de user - método login", () => {
             email: user.email,
             name: user.name,
             password: user.password,
+            createdAt: new Date(),
         });
 
         await userRepository.save(entity);
