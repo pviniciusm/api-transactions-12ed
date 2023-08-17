@@ -53,7 +53,7 @@ describe("Testes unitários do login usecase", () => {
     });
 
     // 3 - user existe, senha ok, retorno de sucesso
-    test("deveria retornar acesso não autorizado se o user existe mas a senha está incorreta", async () => {
+    test("deveria retornar sucesso se as credenciais estiverem corretas", async () => {
         const sut = new LoginUsecase();
 
         jest.spyOn(UserRepository.prototype, "getByEmail").mockResolvedValue(new User("any_name", 654654, "any_email", 99, "any_password"));

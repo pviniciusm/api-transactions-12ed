@@ -4,7 +4,7 @@ export default {
     preset: "ts-jest",
     testEnvironment: "node",
     transform: {
-        ".+\\.ts$": "ts-jest",
+        ".+\\.ts$": ["ts-jest", { isolatedModules: true }],
     },
 
     // Informa em qual diretório os testes

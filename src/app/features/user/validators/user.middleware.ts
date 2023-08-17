@@ -17,4 +17,22 @@ export class UserMiddleware {
             return HttpResponse.genericError(res, error);
         }
     }
+
+    public static validateLoginFields(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { email, password } = req.body;
+
+            if (!email) {
+                return HttpResponse.fieldNotProvided(res, "Email");
+            }
+
+            if (!password) {
+                return HttpResponse.fieldNotProvided(res, "Password");
+            }
+
+            next();
+        } catch (error: any) {
+            return HttpResponse.genericError(res, error);
+        }
+    }
 }
