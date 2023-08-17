@@ -24,6 +24,9 @@ describe("Testes de API do controller de user - método login", () => {
 
         await transactionRepository.clear();
         await userRepository.clear();
+
+        const cache = CacheDatabase.connection;
+        await cache.flushall();
     });
 
     afterAll(async () => {
