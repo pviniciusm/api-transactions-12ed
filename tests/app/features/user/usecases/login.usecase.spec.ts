@@ -56,7 +56,9 @@ describe("Testes unitários do login usecase", () => {
     test("deveria retornar sucesso se as credenciais estiverem corretas", async () => {
         const sut = new LoginUsecase();
 
-        jest.spyOn(UserRepository.prototype, "getByEmail").mockResolvedValue(new User("any_name", 654654, "any_email", 99, "any_password"));
+        const mockedUser = new User("any_name", 654654, "any_email", 99, "any_password");
+
+        jest.spyOn(UserRepository.prototype, "getByEmail").mockResolvedValue(mockedUser);
 
         const result = await sut.execute({
             email: "any_email",
@@ -67,5 +69,9 @@ describe("Testes unitários do login usecase", () => {
         expect(result.code).toBe(200);
         expect(result.ok).toBe(true);
         expect(result.message).toBe("Login feito com sucesso");
+
+        expect(result.data).toBeDefined();
+        expect(result.data).toHaveProperty("id", mockedUser.id);
+        expect(result.data).toHaveProperty("name", mockedUser.name);
     });
 });

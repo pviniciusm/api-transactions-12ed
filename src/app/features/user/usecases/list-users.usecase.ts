@@ -27,7 +27,7 @@ export class ListUsersUsecase {
         return {
             ok: true,
             message: "Users successully listed",
-            data: result,
+            data: result.map((item) => item.toJson()),
             code: 200,
         };
     }

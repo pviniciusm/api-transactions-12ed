@@ -18,6 +18,15 @@ export class Return {
         };
     }
 
+    public static created(message: string, data: any): Result {
+        return {
+            ok: true,
+            message,
+            data,
+            code: 201,
+        };
+    }
+
     public static notFound(entity: string): Result {
         return {
             ok: false,

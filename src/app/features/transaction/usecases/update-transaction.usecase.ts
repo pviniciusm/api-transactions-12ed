@@ -20,13 +20,12 @@ export class UpdateTransactionUsecase {
      * Executa o usecase de atualização de uma transação e registra no banco de dados.
      * @param params ID do user e da transação + valores a serem alterados.
      * @returns lista de transações atualizada.
-     * @deprecated usar o Usecase Update2Usecase
      * @async este código é assíncrono
      * @author Paulo Cardoso
      * @example [{}]
      */
     public async execute(params: UpdateTransactionParams): Promise<Result> {
-        const user = new UserRepository().get(params.userId);
+        const user = await new UserRepository().get(params.userId);
         if (!user) {
             return Return.notFound("User");
         }
